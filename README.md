@@ -22,7 +22,7 @@ I have taken all the scripts I have written and created libraries for my own use
 ## Dependencies
   * Written for Python 2.7.  
   * I recommend using Anaconda when running on Windows.
-  * ETE2 (etetoolkit.org) :: for making cladograms only
+  * ETE2 (etetoolkit.org) :: for making cladograms only.  I use ete2-2.2.1072-py2.7.egg, which is years out of date.  (Because I didn't need new features)
 
 ## Versions
   ### v0.0  
