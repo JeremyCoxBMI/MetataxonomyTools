@@ -14,6 +14,10 @@ I have taken all the scripts I have written and created libraries for my own use
   * Uses local data files improving speed over Eutils. 
   * Convert taxon ID to other taxons in the lineage
   * Create cladograms
+  ### Additional useful scripts
+  * Split a fasta file into chunks (by line count)
+  * (more)
+  * List of helpful bash tricks
   
 ## Dependencies
   * Written for Python 2.7.  
