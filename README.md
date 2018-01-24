@@ -18,7 +18,7 @@ I have taken all the scripts I have written and created libraries for my own use
 ## Dependencies
   * Written for Python 2.7.  
   * I recommend using Anaconda when running on Windows.
-  * ETE2 (ETE_TOOLKIT) :: for making cladograms only
+  * ETE2 (etetoolkit.org) :: for making cladograms only
 
 ## Versions
   ### v0.0  
