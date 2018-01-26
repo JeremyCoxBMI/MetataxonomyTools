@@ -1,5 +1,4 @@
-DBpath="Z:/cox1kb/imsa2/data_files/gi_taxid/"
-
+from config import *
 
 def buildNames():
     return buildNamesLocal(DBpath+"names.dmp")
@@ -192,3 +191,57 @@ def levelToText( level ):
     elif level=="order":
         return "o"
     return '-1'
+
+
+# return an integer
+def getSpeciesID(taxonID, nodes):
+    result = -1
+    currID = int(taxonID)
+    while (currID in nodes):
+        if nodes[currID][1] == "no rank":
+            result = currID
+
+        if nodes[currID][1] == "species":
+            result = currID
+            break
+
+        #top nodes
+        if currID == 1 or currID == 2:
+            break
+
+        currID = nodes[currID][0]
+    return result
+
+# returns dictionary mapping accession number to speciesID (int)
+def extractSpeciesID(accessionNos, nodes):
+    result = dict()
+    for line in open(AccessionDBpath+"nucl_gb.accession2taxid"):
+        splits = line.split()
+        # 0 accession       1 accession.version     2 taxid     3 gid
+        if splits[0] in accessionNos:
+            result[splits[0]] = getSpeciesID( int(splits[2]),nodes)
+
+    return result
+
+
+
+def findTaxaAccessionNumbers( adict ):
+    result = []
+    #iterate over file
+    for line in open(AccessionDBpath+"master.accession2taxid"):
+        splits = line.split()
+
+
+def findKingdom(speciesID, names, nodes):
+    result = "" #text name
+    next=speciesID
+
+    while next != 1:
+        if next in nodes:
+            (next, level) = nodes[next]
+            if level == "kingdom":
+                result=names[next]
+            if level == "superkingdom":
+                result+="\t"+names[next]
+                break
+    return result
