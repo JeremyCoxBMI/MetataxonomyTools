@@ -6,9 +6,9 @@ import sys
 if __name__ == "__main__":
 
     print >> sys.stderr, "01 Monitoring Start Up"
-    files=sys.argv[1:]
-    print str(len(files))
-    print files
+    files_list_file=sys.argv[1]
+    # print str(len(files))
+    # print files
 
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tl.buildNodes()
@@ -18,10 +18,10 @@ if __name__ == "__main__":
     accessionToFind = {}
 
     print >> sys.stderr, "20 Build list accession numbers"
-    for file in files:
-        for line in open(file):
+    for l in open(files_list_file):
+        for line in open(l.strip()):
             if line[0]==">":
-                accessionToFind[ line.split()[0][1:] ]
+                accessionToFind[ line.split()[0][1:] ] = 1
 
     print >> sys.stderr, "30 Find Taxa from Accession Number"
     taxa = tl.findTaxaAccessionNumbers(accessionToFind)
@@ -38,6 +38,6 @@ if __name__ == "__main__":
 
     outF = open("species.db.list.txt","w")
     for sID in species:
-        outF.write(str(sID)+species[sID]+"\n")
+        outF.write(str(sID)+"\t"+species[sID]+"\n")
     outF.close()
 

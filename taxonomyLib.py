@@ -20,7 +20,7 @@ def buildNamesLocal(file):
     return result
 
 def buildNodes():
-    return buildNodes(DBpath+"nodes.dmp")
+    return buildNodesLocal(DBpath+"nodes.dmp")
 
 def buildNodesLocal(file):
     inFile = open(file)
