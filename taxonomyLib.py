@@ -223,13 +223,16 @@ def extractSpeciesID(accessionNos, nodes):
 
     return result
 
-
-
 def findTaxaAccessionNumbers( adict ):
-    result = []
+    result = {}
     #iterate over file
     for line in open(AccessionDBpath+"master.accession2taxid"):
         splits = line.split()
+
+        if splits[0] in adict:
+            print splits[0], " found ", splits[2]
+            result[splits[2]]=1
+
 
 
 def findKingdom(speciesID, names, nodes):
