@@ -929,7 +929,41 @@ def importFileData(file, countsByTreatmentCladeTaxonTOcounts, orderByTreatmentCl
     return labels
 
 
+def phylaCounts(node, splitChar=" "):
 
+    if node.name == " Bacteria":
+        for child in node.get_children():
+            print child.name+"\t"+str(countRecurse(child, splitChar))
+    else:
+        for child in node.get_children():
+            phylaCounts(child, splitChar)
+
+def countRecurse(node, splitChar):
+    if len(node.name.split(splitChar)) > 1:
+        return int(node.name.split(splitChar)[-1])
+
+    totes=0
+    for child in node.get_children():
+        totes += countRecurse(child, splitChar)
+    return totes
+
+def phylaCounts(node, splitChar=" "):
+
+    if node.name == " Bacteria":
+        for child in node.get_children():
+            print child.name+"\t"+str(countRecurse(child, splitChar))
+    else:
+        for child in node.get_children():
+            phylaCounts(child, splitChar)
+
+def countRecurse(node, splitChar):
+    if len(node.name.split(splitChar)) > 1:
+        return int(node.name.split(splitChar)[-1])
+
+    totes=0
+    for child in node.get_children():
+        totes += countRecurse(child, splitChar)
+    return totes
 
 
 

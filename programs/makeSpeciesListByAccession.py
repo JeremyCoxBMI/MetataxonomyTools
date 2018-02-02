@@ -21,14 +21,14 @@ if __name__ == "__main__":
     for l in open(files_list_file):
         for line in open(l.strip()):
             if line[0]==">":
-                accessioNumbersToFind[ line.split()[0][1:].split('.')[0] ] = 1
+                accessionNumbersToFind[ line.split()[0][1:].split('.')[0] ] = 1
 
     print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
 
     print >> sys.stderr, "30 Find Taxa from Accession Number"
     taxa = tl.findTaxaAccessionNumbers(accessionNumbersToFind)
 
-    print >> sys.stderr, "TAXA found", str(len(taxa))
+    print >> sys.stderr, "TAXA found", str(len(taxa.keys()))
 
     species = {}
 

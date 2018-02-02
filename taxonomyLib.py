@@ -205,8 +205,10 @@ def getSpeciesID(taxonID, nodes):
             result = currID
             break
 
-        #top nodes
-        if currID == 1 or currID == 2:
+            #top nodes
+            #2018-02-02 noticed tree no longer rooted to Taxon=1 (ROOT)
+            # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
+        if currID == 1 or currID == 2 or currID == 131567 or currID == 10239 or currID == 2759:
             break
 
         currID = nodes[currID][0]
@@ -230,9 +232,9 @@ def findTaxaAccessionNumbers( adict ):
         splits = line.split()
 
         if splits[0] in adict:
-            print splits[0], " found ", splits[2]
+            #print splits[0], " found ", splits[2]
             result[splits[2]]=1
-
+    return result
 
 
 def findKingdom(speciesID, names, nodes):
