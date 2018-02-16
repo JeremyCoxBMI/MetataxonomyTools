@@ -32,16 +32,20 @@ if __name__ == "__main__":
 
     species = {}
 
-    print >> sys.stderr, "40 Find species and Kingdom"
+    print >> sys.stderr, "40 Find species and Kingdom, write file real time"
+
+
+    outF = open("species.db.list.txt","w")
     for taxon in taxa:
         speciesID = tl.getSpeciesID(taxon, nodes)
         if not speciesID in species:
             species[speciesID] = tl.findKingdom(speciesID, names, nodes)
+            outF.write(str(speciesID)+"\t"+species[speciesID]+"\n")
 
-    print >> sys.stderr, "50 write file"
-
-    outF = open("species.db.list.txt","w")
-    for sID in species:
-        outF.write(str(sID)+"\t"+species[sID]+"\n")
-    outF.close()
+    # print >> sys.stderr, "50 write file"
+    #
+    # outF = open("species.db.list.txt","w")
+    # for sID in species:
+    #     outF.write(str(sID)+"\t"+species[sID]+"\n")
+    # outF.close()
 
