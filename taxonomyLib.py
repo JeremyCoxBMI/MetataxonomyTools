@@ -214,6 +214,38 @@ def getSpeciesID(taxonID, nodes):
         currID = nodes[currID][0]
     return result
 
+#####
+#  Supposed to get Species and Genus taxon ID.  However, if there is no genus, it will run amok
+#
+####
+def getSpeciesIDGenusID(taxonID, nodes):
+
+    specID=-1
+    genusID=-1
+
+    currID = int(taxonID)
+    while (currID in nodes):
+        if specID == -1 and nodes[currID][1] == "no rank":  #capture FIRST TAXON, hopefully to be overwritten
+             result = currID
+
+        if nodes[currID][1] == "species":
+            specID = currID
+
+        if nodes[currID][1] == "genus":
+            genusID = currID
+            break
+
+            #top nodes
+            #2018-02-02 noticed tree no longer rooted to Taxon=1 (ROOT)
+            # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
+        if currID == 1 or currID == 2 or currID == 131567 or currID == 10239 or currID == 2759:
+            break
+
+        currID = nodes[currID][0]
+    return (specID, genusID)
+
+
+
 # returns dictionary mapping accession number to speciesID (int)
 def extractSpeciesID(accessionNos, nodes):
     result = dict()
@@ -234,6 +266,18 @@ def findTaxaAccessionNumbers( adict ):
         if splits[0] in adict:
             #print splits[0], " found ", splits[2]
             result[splits[2]]=1
+    return result
+
+
+def findTaxaAccessionNumbersMap( adict ):
+    result = {}
+    #iterate over file
+    for line in open(AccessionDBpath+"master.accession2taxid"):
+        splits = line.split()
+
+        if splits[0] in adict:
+            #print splits[0], " found ", splits[2]
+            result[splits[0]]=splits[2]
     return result
 
 
