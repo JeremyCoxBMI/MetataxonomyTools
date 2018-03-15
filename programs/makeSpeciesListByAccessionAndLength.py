@@ -36,6 +36,7 @@ if __name__ == "__main__":
 
 
 
+
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tl.buildNodes()
     names = tl.buildNames()
@@ -69,11 +70,14 @@ if __name__ == "__main__":
         outF = open(l+"species.db.list.txt","w")
         outF.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tKINGDOM\tLENGTH\n")
 
+        k=0
         for acc in taxa:
             (taxon, l) = taxa[acc]
             speciesID = tl.getSpeciesID(taxon, nodes)
 
             kingdom = tl.findKingdom(speciesID, names, nodes)
             outF.write(str(acc)+"\t"+taxon+"\t"+str(speciesID)+"\t"+str(kingdom)+"\t"+str(l)+"\n")
-
+            if k % (100*1000) == 0:
+                print >> sys.stderr, "Processing "+str(k/(1000*1000.0))+" millionth Accession"
+            k+=1
     #end for l in file_list

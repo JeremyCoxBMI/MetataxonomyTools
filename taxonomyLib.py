@@ -1,5 +1,17 @@
 from config import *
 
+# Thanks to NCBI, the structure of the taxonomy table is constantly changing
+# 1 is no longer the root node
+# 2018-02-02 noticed tree no longer rooted to Taxon=1 (ROOT)
+            # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
+BREAK_IDS = {1 : True,      #old root
+             2 : True,      #bacteria
+             131567 : True, #celular organisms
+             10239 : True,  #viruses
+            2759 : True}    #eukaryota
+
+
+
 def buildNames():
     return buildNamesLocal(DBpath+"names.dmp")
 
@@ -51,7 +63,7 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
     k = next
     #EXAMPLE
     #  (((((Gammaretrovirus)Orthoretrovirinae)Retroviridae)Retro-transcribing_viruses)Viruses,
-    while k != 1 and k != 131567:
+    while not k in BREAK_IDS:
         (next, level) = nodes[k]
         if filter == None or level in filter:
             result = result + (")_%s_" % level) + names[k]
@@ -76,7 +88,7 @@ def buildTaxaLevelList2( x , nodes, filter):
     result = []
     k = x
     last = "species"
-    while k != 1 and k != 131567:
+    while not k in BREAK_IDS:
         if k in nodes:
             (next, level) = nodes[k]
         else:
@@ -111,7 +123,7 @@ def buildTaxaLevelList( x , nodes):
     #reverse order is needed to build tree
     result = []
     k = x
-    while k != 1 and k != 131567:
+    while not k in BREAK_IDS:
         result.append(k)
         if k in nodes:
             (next, level) = nodes[k]
@@ -208,7 +220,7 @@ def getSpeciesID(taxonID, nodes):
             #top nodes
             #2018-02-02 noticed tree no longer rooted to Taxon=1 (ROOT)
             # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
-        if currID == 1 or currID == 2 or currID == 131567 or currID == 10239 or currID == 2759:
+        if currID in BREAK_IDS:
             break
 
         currID = nodes[currID][0]
@@ -238,7 +250,7 @@ def getSpeciesIDGenusID(taxonID, nodes):
             #top nodes
             #2018-02-02 noticed tree no longer rooted to Taxon=1 (ROOT)
             # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
-        if currID == 1 or currID == 2 or currID == 131567 or currID == 10239 or currID == 2759:
+        if currID in BREAK_IDS:
             break
 
         currID = nodes[currID][0]
@@ -285,7 +297,7 @@ def findKingdom(speciesID, names, nodes):
     result = "" #text name
     next=speciesID
 
-    while next != 1:
+    while not next in BREAK_IDS:
         if next in nodes:
             (next, level) = nodes[next]
             if level == "kingdom":
