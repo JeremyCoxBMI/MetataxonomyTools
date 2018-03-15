@@ -63,11 +63,13 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
     k = next
     #EXAMPLE
     #  (((((Gammaretrovirus)Orthoretrovirinae)Retroviridae)Retro-transcribing_viruses)Viruses,
-    while not k in BREAK_IDS:
+    while True:
         (next, level) = nodes[k]
         if filter == None or level in filter:
             result = result + (")_%s_" % level) + names[k]
             open += "("
+        if k in BREAK_IDS:
+            break
         k = next
     return open+result
 
@@ -88,7 +90,7 @@ def buildTaxaLevelList2( x , nodes, filter):
     result = []
     k = x
     last = "species"
-    while not k in BREAK_IDS:
+    while True:
         if k in nodes:
             (next, level) = nodes[k]
         else:
@@ -98,6 +100,8 @@ def buildTaxaLevelList2( x , nodes, filter):
             result.append( (k, distance) )
             #last updates only when a level is used
             last = level
+        if k in BREAK_IDS:
+            break
         #k always updates to move next
         k = next
 
@@ -123,12 +127,14 @@ def buildTaxaLevelList( x , nodes):
     #reverse order is needed to build tree
     result = []
     k = x
-    while not k in BREAK_IDS:
+    while True:
         result.append(k)
         if k in nodes:
             (next, level) = nodes[k]
         else:
             (next, level) = 1, "no rank"
+        if k in BREAK_IDS:
+            break
         k = next
 
     #add prokaryota level
@@ -297,7 +303,7 @@ def findKingdom(speciesID, names, nodes):
     result = "" #text name
     next=speciesID
 
-    while not next in BREAK_IDS:
+    while True:
         if next in nodes:
             (next, level) = nodes[next]
             if level == "kingdom":
@@ -305,4 +311,6 @@ def findKingdom(speciesID, names, nodes):
             if level == "superkingdom":
                 result+="\t"+names[next]
                 break
+        if next in BREAK_IDS:
+            break
     return result
