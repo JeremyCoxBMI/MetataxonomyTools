@@ -1,4 +1,5 @@
 from config import *
+import sys
 
 # Thanks to NCBI, the structure of the taxonomy table is constantly changing
 # 1 is no longer the root node
@@ -9,8 +10,9 @@ BREAK_IDS = {1 : True,      #old root
              131567 : True, #celular organisms
              10239 : True,  #viruses
             2759 : True}    #eukaryota
-
-
+# There seems to be some broken edges in the nodes table
+# Making max iteration to stop any problems
+MAX_ITERATIONS=20
 
 def buildNames():
     return buildNamesLocal(DBpath+"names.dmp")
@@ -63,14 +65,21 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
     k = next
     #EXAMPLE
     #  (((((Gammaretrovirus)Orthoretrovirinae)Retroviridae)Retro-transcribing_viruses)Viruses,
+    z=0
     while True:
         (next, level) = nodes[k]
         if filter == None or level in filter:
             result = result + (")_%s_" % level) + names[k]
             open += "("
+        elif z >= MAX_ITERATIONS:
+            print >> sys.stderr,"taxonomyLib::buildTaxaLevels could not complete for taxon\t"+str(x)
+            break
         if k in BREAK_IDS:
             break
         k = next
+        z+=1
+
+
     return open+result
 
 height = dict()
@@ -83,7 +92,7 @@ height["family"]=3
 height["genus"]=2
 height["species"] = 1
 
-
+#TODO - update for MAX_ITERATIONS
 def buildTaxaLevelList2( x , nodes, filter):
     #Returns index key list from highest level to most specific
     #reverse order is needed to build tree
@@ -121,12 +130,13 @@ def buildTaxaLevelList2( x , nodes, filter):
 
 
 
-
+#TODO - update for MAX_ITERATIONS
 def buildTaxaLevelList( x , nodes):
     #Returns index key list from highest level to most specific
     #reverse order is needed to build tree
     result = []
     k = x
+
     while True:
         result.append(k)
         if k in nodes:
@@ -215,6 +225,7 @@ def levelToText( level ):
 def getSpeciesID(taxonID, nodes):
     result = -1
     currID = int(taxonID)
+    z=0
     while (currID in nodes):
         if nodes[currID][1] == "no rank":
             result = currID
@@ -228,8 +239,12 @@ def getSpeciesID(taxonID, nodes):
             # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
         if currID in BREAK_IDS:
             break
-
         currID = nodes[currID][0]
+
+        z+=1
+        if z >= MAX_ITERATIONS:
+            print >> sys.stderr,"taxonomyLib::getSpeciesID could not find taxonID\t"+str(taxonID)
+            break
     return result
 
 #####
@@ -241,6 +256,7 @@ def getSpeciesIDGenusID(taxonID, nodes):
     specID=-1
     genusID=-1
 
+    z=0
     currID = int(taxonID)
     while (currID in nodes):
         if specID == -1 and nodes[currID][1] == "no rank":  #capture FIRST TAXON, hopefully to be overwritten
@@ -258,7 +274,10 @@ def getSpeciesIDGenusID(taxonID, nodes):
             # root (old school)     #bacteria#cellular organisms    #viruses           #eukaroyta
         if currID in BREAK_IDS:
             break
-
+        z+=1
+        if z >= MAX_ITERATIONS:
+            print >> sys.stderr,"taxonomyLib::findSpeciesIDGenusID coudl not find taxon\t"+str(taxonID)+"\tresults spec\t"+str(specID)+"\tgenus\t"+str(genusID)
+            break
         currID = nodes[currID][0]
     return (specID, genusID)
 
@@ -303,7 +322,8 @@ def findKingdom(speciesID, names, nodes):
     result = "" #text name
     next=speciesID
 
-    while True:
+    z=0
+    while (True):
         if next in nodes:
             (next, level) = nodes[next]
             if level == "kingdom":
@@ -312,5 +332,9 @@ def findKingdom(speciesID, names, nodes):
                 result+="\t"+names[next]
                 break
         if next in BREAK_IDS:
+            break
+        z+= 1
+        if z >= MAX_ITERATIONS:
+            print >> sys.stderr,"taxonomyLib::findKingdom could not find speciesID\t"+str(speciesID)
             break
     return result

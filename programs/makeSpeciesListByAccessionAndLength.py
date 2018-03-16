@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
         print >> sys.stderr, "\t\tFILE:\t"+f
 
-        for line in open(l.strip()):
+        for line in open(f.strip()):
             (acc, l) = line.split()
             acc = acc.split('.')[0]
             accessionNumbersToFind[acc] = l
