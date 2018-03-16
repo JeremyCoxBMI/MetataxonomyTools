@@ -43,11 +43,11 @@ if __name__ == "__main__":
 
     print >> sys.stderr, "BEGIN LOOP"
     print >> sys.stderr, "20 Build list accession numbers"
-    for l in files_list_file:
+    for f in files_list_file:
 
         accessionNumbersToFind = {}
 
-        print >> sys.stderr, "\t\tFILE:\t"+l
+        print >> sys.stderr, "\t\tFILE:\t"+f
 
         for line in open(l.strip()):
             (acc, l) = line.split()
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
-        outF = open(l+"species.db.list.txt","w")
+        outF = open(f+"species.db.list.txt","w")
         outF.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tKINGDOM\tLENGTH\n")
 
         k=0
