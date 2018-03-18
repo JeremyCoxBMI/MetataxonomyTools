@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'COX1KB'
 
 import taxonomyLib as tl
@@ -34,14 +35,15 @@ if __name__ == "__main__":
     # print str(len(files))
     # print files
 
-
+    clades = []
 
     indexToLevels = [ -1 for x in range(len(tl.height.keys())+1)]
     indexToLevels[0] = "firstTaxon"
     for level in tl.height:
-        indexToLevels[ tl.height[level] ]
+        indexToLevels[ tl.height[level] ] = level
 
-
+    for key in range(1,9):
+	clades.append(indexToLevels[key])
 
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tl.buildNodes()
@@ -56,9 +58,12 @@ if __name__ == "__main__":
         print >> sys.stderr, "\t\tFILE:\t"+f
 
         for line in open(f.strip()):
-            (acc, l) = line.split()
+            spl = line.split()
+	    acc  = spl[0]
+	    l = int(spl[1])
             acc = acc.split('.')[0]
             accessionNumbersToFind[acc] = l
+	    
 
         print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
 
@@ -74,7 +79,7 @@ if __name__ == "__main__":
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
 
-        header = "ACCESSION\t"+"\t".join(indexToLevels)+"\tSEQ_LENGTH\n"
+        header = "ACCESSION\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
         outF = open(f+".taxonomy.txt","w")
         outFerr = open(f+".taxonomy.txt.Accession.errors","w")
         outFerr.write(header)
@@ -88,7 +93,7 @@ if __name__ == "__main__":
             taxonomy = tl.buildTaxaLevelList3(taxon,nodes)
             taxonomy.append(l)
 
-            outLine = acc+"\t"+'\t'.join(map(str, taxonomy))+"\n"
+            outLine = acc+"\t"+firstTaxon+'\t'+'\t'.join(map(str, taxonomy))+"\n"
 
 
             if (taxonomy[1] == -1):
