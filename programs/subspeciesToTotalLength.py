@@ -20,12 +20,12 @@ for line in open(sys.argv[1]):
       length = int(splits[8])
     
       if not speciesTaxon in speciesToFirstTaxonLength:
-	  speciesToFirstTaxonLength[speciesTaxon] = {}
-      specDict = speciesToFirstTaxonLength[speciesTaxon]
+        speciesToFirstTaxonLength[speciesTaxon] = {}
+        specDict = speciesToFirstTaxonLength[speciesTaxon]
       if firstTaxon in specDict:
-	  specDict[firstTaxon] += length
+        specDict[firstTaxon] += length
       else:
-	  specDict[firstTaxon] = length
+        specDict[firstTaxon] = length
 
 
 
