@@ -132,8 +132,9 @@ def buildTaxaLevelList3( x , nodes, filter=height):
     #Returns index key list from x to species to kingdom
     # -1 if taxon is not found
     #reverse order is needed to build tree
-    result = [-1 for x in filter]
-    k = x
+    result = [-1 for x in range(len(filter)+1)]
+    k = int(x)
+    result[0] = k
     last = "species"
     z=0
     while True:
@@ -510,15 +511,23 @@ def buildTaxaLevelList3( x , nodes, filter=height):
     #Returns index key list from x to species to kingdom
     # -1 if taxon is not found
     #reverse order is needed to build tree
-    result = [-1 for x in filter]
-    k = x
+    result = [-1 for z in range(len(filter)+1)]
+
+    k = int(x)
+    result[0] = k
     last = "species"
     z=0
+    if k in nodes:
+      (next, level) = nodes[k]
+      if (level == "species"):
+        index = filter[level]
+        result[index] = k
+
     while True:
         if k in nodes:
             (next, level) = nodes[k]
         else:
-            (next, level) = 1, "no rank"
+            (next, level) = (1, "no rank")
         if level in filter:
             # distance = height[level]-height[last]
             index = filter[level]

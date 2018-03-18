@@ -63,7 +63,7 @@ if __name__ == "__main__":
 	    l = int(spl[1])
             acc = acc.split('.')[0]
             accessionNumbersToFind[acc] = l
-	    
+
 
         print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
 
-        header = "ACCESSION\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
+        header = "ACCESSION\t"+"\tfirstTaxon\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
         outF = open(f+".taxonomy.txt","w")
         outFerr = open(f+".taxonomy.txt.Accession.errors","w")
         outFerr.write(header)
@@ -90,10 +90,14 @@ if __name__ == "__main__":
 
         for acc in taxa:
             (taxon, l) = taxa[acc]
-            taxonomy = tl.buildTaxaLevelList3(taxon,nodes)
+            taxonomy = tl.buildTaxaLevelList3(int(taxon),nodes)
+            taxonomy.reverse()
             taxonomy.append(l)
+            a = acc.split()[0]
+            #taxonomy[1] = tl.getSpeciesID(int(taxon), nodes)
+            #taxonomy[0] = taxonomy[0][0]
 
-            outLine = acc+"\t"+firstTaxon+'\t'+'\t'.join(map(str, taxonomy))+"\n"
+            outLine = a+"\t"+'\t'.join(map(str, taxonomy))+"\n"
 
 
             if (taxonomy[1] == -1):
