@@ -91,6 +91,7 @@ height["order"]=4
 height["family"]=3
 height["genus"]=2
 height["species"] = 1
+#height["firstTaxon"] = 0
 
 #TODO - update for MAX_ITERATIONS
 def buildTaxaLevelList2( x , nodes, filter):
@@ -126,17 +127,54 @@ def buildTaxaLevelList2( x , nodes, filter):
 
     return result
 
+def buildTaxaLevelList3( x , nodes, filter=height):
+    #Returns index key list from x to species to kingdom
+    # -1 if taxon is not found
+    #reverse order is needed to build tree
+    result = [-1 for x in filter]
+    k = x
+    last = "species"
+    z=0
+    while True:
+        if k in nodes:
+            (next, level) = nodes[k]
+        else:
+            (next, level) = 1, "no rank"
+        if level in filter:
+            # distance = height[level]-height[last]
+            index = filter[level]
+            result[index] = k
+            #last updates only when a level is used
+            last = level
+        if k in BREAK_IDS:
+            break
+        #k always updates to move next
+        k = next
+        z+=1
+        if z >= MAX_ITERATIONS:
+            break
+
+    #add prokaryota level
+    if len(result) > 0 and result[-1] == 2:
+        result.append( (1712345,1) )
+
+    #add archaebacteria
+    if len(result) > 0 and result[-1] == 2157:
+        result.append( (18181818,1) )
+
+    result.reverse()
+
+    return result
 
 
 
-
-#TODO - update for MAX_ITERATIONS
 def buildTaxaLevelList( x , nodes):
     #Returns index key list from highest level to most specific
     #reverse order is needed to build tree
     result = []
     k = x
 
+    z=0
     while True:
         result.append(k)
         if k in nodes:
@@ -146,6 +184,9 @@ def buildTaxaLevelList( x , nodes):
         if k in BREAK_IDS:
             break
         k = next
+        z+=1
+        if z >= MAX_ITERATIONS:
+            break
 
     #add prokaryota level
     if result[-1] == 2:

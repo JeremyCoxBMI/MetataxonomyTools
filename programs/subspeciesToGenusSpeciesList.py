@@ -16,21 +16,14 @@ for line in open(sys.argv[1]):
     splits = line.split('\t')
     if first:
       first=False
-    #elif len(splits) >= 4:
-    else:
+    elif len(splits) >= 7:
       acc = splits[0]
       firstTaxon = splits[1]
       speciesTaxon = splits[2]
       genusTaxon = splits[3]
       kingdom = splits[4]
       length = int(splits[5])
-      #print splits
-      #print acc
-      #print genusTaxon
-      #print kingdom
-      #print str(length)
-      #exit(0)
-    
+
       if not genusTaxon in speciesToFirstTaxonLength:
         speciesToFirstTaxonLength[genusTaxon] = {}
         specDict = speciesToFirstTaxonLength[genusTaxon]
@@ -43,7 +36,7 @@ for line in open(sys.argv[1]):
 
 outF = open(sys.argv[1]+".genus.to.length", "w")
 outF.write("GENUS_ID\tFIRST_TAXON\tLENGTH\n")
-outF2 = open(sys.argv[1]+".one_genus.to.length", "w")
+outF2 = open(sys.argv[1]+".one_species.to.length", "w")
 outF2.write("GENUS_ID\tFIRST_TAXON\tLENGTH\n")
 
 all_total=0

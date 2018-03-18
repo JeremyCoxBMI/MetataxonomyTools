@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 __author__ = 'COX1KB'
 
 import taxonomyLib as tl
@@ -37,6 +36,12 @@ if __name__ == "__main__":
 
 
 
+    indexToLevels = [ -1 for x in range(len(tl.height.keys())+1)]
+    indexToLevels[0] = "firstTaxon"
+    for level in tl.height:
+        indexToLevels[ tl.height[level] ]
+
+
 
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tl.buildNodes()
@@ -63,26 +68,33 @@ if __name__ == "__main__":
 
         print >> sys.stderr, "TAXA found", str(len(taxa.keys()))
 
-        species = {}
+        accessionToTaxonomy = {}
 
 
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
-        outF = open(f+".species.genus.db.list.txt","w")
-        outFerr = open(f+".species.genus.db.list.txt.Accession.errors","w")
-        outF.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tGENUS_ID\tKINGDOM\tLENGTH\n")
-        outFerr.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tKINGDOM\tLENGTH\n")
+
+        header = "ACCESSION\t"+"\t".join(indexToLevels)+"\tSEQ_LENGTH\n"
+        outF = open(f+".taxonomy.txt","w")
+        outFerr = open(f+".taxonomy.txt.Accession.errors","w")
+        outFerr.write(header)
+        outF.write(header)
 
         k=0
         kingdom="Bacteria"
+
         for acc in taxa:
             (taxon, l) = taxa[acc]
-            (speciesID, genusID) = tl.getSpeciesIDGenusID(taxon, nodes)
-            #kingdom = tl.findKingdom(speciesID, names, nodes)
-            if (speciesID == -1):
-                outFerr.write(str(acc)+"\t"+taxon+"\t"+str(speciesID)+"\t"+str(genusID)+"\t"+str(kingdom)+"\t"+str(l)+"\n")
+            taxonomy = tl.buildTaxaLevelList3(taxon,nodes)
+            taxonomy.append(l)
+
+            outLine = acc+"\t"+'\t'.join(map(str, taxonomy))+"\n"
+
+
+            if (taxonomy[1] == -1):
+                outFerr.write(outLine)
             else:
-                outF.write(str(acc)+"\t"+taxon+"\t"+str(speciesID)+"\t"+str(genusID)+"\t"+str(kingdom)+"\t"+str(l)+"\n")
+                outF.write(outLine)
 
             if k % (100*1000) == 0:
                 print >> sys.stderr, "Processing "+str(k/(1000*1000.0))+" millionth Accession"
