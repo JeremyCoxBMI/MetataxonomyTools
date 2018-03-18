@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'COX1KB'
 
 import taxonomyLib as tl
@@ -69,19 +70,18 @@ if __name__ == "__main__":
 
         outF = open(f+".species.db.list.txt","w")
         outFerr = open(f+".species.db.list.txt.Accession.errors","w")
-        outF.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tGENUS_ID\tKINGDOM\tLENGTH\n")
-        outFerr.write("ACCESSION\tFIRST_TAXON\tSPECIES_ID\tKINGDOM\tLENGTH\n")
+        outF.write("ACCESSION\t|\tFIRST_TAXON\t|\tSPECIES_ID\t|\tKINGDOM\t|\tLENGTH\n")
+        outFerr.write("ACCESSION\t|\tFIRST_TAXON\t|\tSPECIES_ID\t|\tKINGDOM\t|\tLENGTH\n")
 
         k=0
-        kingdom="Bacteria"
         for acc in taxa:
             (taxon, l) = taxa[acc]
-            (speciesID, genusID) = tl.getSpeciesIDGenusID(taxon, nodes)
-            #kingdom = tl.findKingdom(speciesID, names, nodes)
+            speciesID = tl.getSpeciesID(taxon, nodes)
+            kingdom = tl.findKingdom(speciesID, names, nodes)
             if (speciesID == -1):
-                outFerr.write(str(acc)+"\t"+taxon+"\t"+str(speciesID)+"\t"+str(genusID)+"\t"+str(kingdom)+"\t"+str(l)+"\n")
+                outFerr.write(str(acc)+"\t|\t"+taxon+"\t|\t"+str(speciesID)+"\t|\t"+str(kingdom)+"\t|\t"+str(l)+"\n")
             else:
-                outF.write(str(acc)+"\t"+taxon+"\t"+str(speciesID)+"\t"+str(genusID)+"\t"+str(kingdom)+"\t"+str(l)+"\n")
+                outF.write(str(acc)+"\t|\t"+taxon+"\t|\t"+str(speciesID)+"\t|\t"+str(kingdom)+"\t|\t"+str(l)+"\n")
 
             if k % (100*1000) == 0:
                 print >> sys.stderr, "Processing "+str(k/(1000*1000.0))+" millionth Accession"
