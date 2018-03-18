@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'COX1KB'
 
 import sys
@@ -21,12 +22,18 @@ firstTaxonListAtCladeAndTaxonID = {}
 
 
 
-
+first=True
 for line in open(sys.argv[1]):
     splits = line.split('\t')
     if first:
         colnames=splits
-        clades=splits[1:-1] #skip first (accession) and last (seq length)
+        
+#typo previous program
+	#clades=splits[1:-1] #skip first (accession) and last (seq length)
+        clades=splits[2:-1] #skip first (accession) and last (seq length)
+
+	#print splits
+	#print '\n'
 
         firstTaxonListAtCladeAndTaxonID = initializeDoubleDict(clades)
         first=False
@@ -37,8 +44,10 @@ for line in open(sys.argv[1]):
         else:
             firstTaxonToLength[ft] += int(splits[-1])
 
-        for x in range(len(firstTaxonToLength.keys())):
-            taxon = splits[x+1]
+        for x in range(len(clades)):
+#            print x, "\t", len(splits), "\t", len(clades), "\t", line
+
+	    taxon = splits[x+1]
             clade = clades[x]
             if taxon in firstTaxonListAtCladeAndTaxonID[clade]:
                 firstTaxonListAtCladeAndTaxonID[clade][taxon].append(ft)
@@ -63,3 +72,4 @@ for clade in clades:
         outF.write(outLine)
     print sys.stderr >> "Longest genomes only at clade\t"+clade+"\thas total length\t"+str(total_size)
     total_size = 0
+
