@@ -15,8 +15,8 @@ def findAccessionNumbers2TaxaLength( adict ):
     for line in open(tl.AccessionDBpath+"master.accession2taxid"):
         splits = line.split()
         acc = splits[0].split('.')[0]
-        if acc == "NZ_GG666849":
-            DEBUG = "LINE"
+        # if acc == "NZ_GG666849":
+        #     DEBUG = "LINE"
 
         # if len(acc) > 0 and acc[0] == 'N':
         #     cheese = acc in adict

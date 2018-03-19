@@ -38,14 +38,15 @@ for line in open(sys.argv[1]):
         else:
             firstTaxonToLength[ft] += int(splits[-1])
 
-        for x in range(len(clades)):
-            taxon = splits[x+2]  #skip accession and firstTaxon
-            clade = clades[x]
-            if taxon in firstTaxonListAtCladeAndTaxonID[clade]:
-                if ft not in firstTaxonListAtCladeAndTaxonID[clade][taxon]:
-                    firstTaxonListAtCladeAndTaxonID[clade][taxon].append(ft)
-            else:
-                firstTaxonListAtCladeAndTaxonID[clade][taxon] = [ ft ]
+        if len(splits) >= 8:
+            for x in range(len(clades)-2): #skip kingdom, superkingdom
+                taxon = splits[x+2]  #skip accession and firstTaxon
+                clade = clades[x]
+                if taxon in firstTaxonListAtCladeAndTaxonID[clade]:
+                    if ft not in firstTaxonListAtCladeAndTaxonID[clade][taxon]:
+                        firstTaxonListAtCladeAndTaxonID[clade][taxon].append(ft)
+                else:
+                    firstTaxonListAtCladeAndTaxonID[clade][taxon] = [ ft ]
 
 outFileByClade = []
 total_size=0
