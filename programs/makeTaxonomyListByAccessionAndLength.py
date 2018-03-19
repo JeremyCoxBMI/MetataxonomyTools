@@ -90,20 +90,22 @@ if __name__ == "__main__":
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
 
-        header = "ACCESSION\t"+"\tfirstTaxon\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
+        header = "ACCESSION\t"+"firstTaxon\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
         outF = open(f+".taxonomy.txt","w")
         outFerr = open(f+".taxonomy.txt.Accession.errors","w")
         outF2 = open(f+".taxonomy_as_text.txt","w")
         outFerr.write(header)
         outF.write(header)
+	outF2.write(header)
 
         k=0
         kingdom="Bacteria"
 
         for acc in taxa:
             (taxon, l) = taxa[acc]
+	    taxon = int(taxon)
             taxonomy = tl.buildTaxaLevelList3(int(taxon),nodes)
-            taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes)
+            taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes, tl.height.keys() )
             taxonomy.reverse()
             #taxonomy_txt.reverse()
             taxonomy.append(l)
@@ -113,8 +115,11 @@ if __name__ == "__main__":
             #taxonomy[0] = taxonomy[0][0]
 
             outLine = a+"\t"+'\t'.join(map(str, taxonomy))+"\n"
-            outLine2 = a+"\t"+taxonomy_txt+"\n"
-
+	    if taxon in names:
+	      outLine2 = a+"\t%d_%s" % (taxon, names[taxon])+taxonomy_txt+"\n"  #taxonomy_txt starts with a tab
+	    else:
+	      outLine2 = a+"\t%d_%s" % (taxon, "unknown")+taxonomy_txt+"\n"  #taxonomy_txt starts with a tab
+	    #+"firstTaxon_"str(taxon)+"\t"
 
 
             if (taxonomy[1] == -1):

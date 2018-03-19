@@ -80,6 +80,7 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
         k = next
         z+=1
 
+
     return open+result
 
 height = dict()
@@ -488,23 +489,26 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
 
     return result
 
-def buildTaxaLevels2(x , names, nodes, filter = None ):
+#returns a tab in front
+#TODO can set if puts (x) first; remove the \t first
+def buildTaxaLevels2(x , names, nodes, filter = None, xIsFirst=False ):
     open = ""
     result = ""
+    #resultInt = []
     k = int(x)
 
-    if k in names:
-      result += names[k]+"\t"
+    if xIsFirst:
+      if k in names:
+        result += "\t"+str(x)+"_"+names[k]+"\t"
     else:
-      result += "unknown\t"
+      result += "\t-1_unknown\t"
 
     z=0
     while True:
 	if k in nodes:
 	  (next, level) = nodes[k]
 	  if filter == None or level in filter:
-	      result = result + ("\t_%s_" % level) + names[k]
-
+	      result = result + ("\t%d_%s_" % (k, level)) + names[k]
 	  elif z >= MAX_ITERATIONS:
 	      print >> sys.stderr,"taxonomyLib::buildTaxaLevels could not complete for taxon\t"+str(x)
 	      break
@@ -513,7 +517,7 @@ def buildTaxaLevels2(x , names, nodes, filter = None ):
 	  k = next
 	  z+=1
 	else:
-	  result+= str(k)+" has no parent node"
+	  result+= str(k)+"_has_no_parent_node"
 	  break
     return result
 

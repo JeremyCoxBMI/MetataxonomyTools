@@ -13,7 +13,7 @@ def initializeDoubleDict(aList):
 
 colnames = []
 clades =[]
-
+resultClades = []
 firstTaxonToLength = {}
 
 # maps clade name to
@@ -27,16 +27,10 @@ for line in open(sys.argv[1]):
     splits = line.split('\t')
     if first:
         colnames=splits
-
-#typo previous program
-	#clades=splits[1:-1] #skip first (accession) and last (seq length)
-        clades=splits[2:-1] #skip first (accession) and last (seq length)
-
-	#print splits
-	#print '\n'
-
+        clades=splits[2:-1] #skip first (accession and firstTaxon) and last (seq length)
         firstTaxonListAtCladeAndTaxonID = initializeDoubleDict(clades)
         first=False
+
     else:
         ft = splits[1]
         if not ft in firstTaxonToLength:
@@ -45,17 +39,18 @@ for line in open(sys.argv[1]):
             firstTaxonToLength[ft] += int(splits[-1])
 
         for x in range(len(clades)):
-#            print x, "\t", len(splits), "\t", len(clades), "\t", line
-
-	    taxon = splits[x+1]
+            taxon = splits[x+2]  #skip accession and firstTaxon
             clade = clades[x]
             if taxon in firstTaxonListAtCladeAndTaxonID[clade]:
-                firstTaxonListAtCladeAndTaxonID[clade][taxon].append(ft)
+                if ft not in firstTaxonListAtCladeAndTaxonID[clade][taxon]:
+                    firstTaxonListAtCladeAndTaxonID[clade][taxon].append(ft)
             else:
                 firstTaxonListAtCladeAndTaxonID[clade][taxon] = [ ft ]
 
 outFileByClade = []
 total_size=0
+
+
 for clade in clades:
     outF = open(sys.argv[1]+"."+clade,'w')
 
