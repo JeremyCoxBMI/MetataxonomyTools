@@ -27,7 +27,7 @@ for line in open(sys.argv[1]):
     splits = line.split('\t')
     if first:
         colnames=splits
-        
+
 #typo previous program
 	#clades=splits[1:-1] #skip first (accession) and last (seq length)
         clades=splits[2:-1] #skip first (accession) and last (seq length)
@@ -58,7 +58,9 @@ outFileByClade = []
 total_size=0
 for clade in clades:
     outF = open(sys.argv[1]+"."+clade,'w')
+
     outF.write("taxon_within_clade_"+clade+"\tfirstTaxonLongestGenome\tgenome_length\n")
+
     for taxonID in firstTaxonListAtCladeAndTaxonID[clade]:
         list_find_max = firstTaxonListAtCladeAndTaxonID[clade][taxonID]
         for k in range(len(list_find_max)):
@@ -70,6 +72,6 @@ for clade in clades:
         ###output taxonID, ft, length
         outLine = taxonID+"\t"+ft+"\t"+str(l3ntgh)+"\n"
         outF.write(outLine)
-    print sys.stderr >> "Longest genomes only at clade\t"+clade+"\thas total length\t"+str(total_size)
+    print >> sys.stderr, "Longest genomes only at clade\t"+clade+"\thas total length\t"+str(total_size)
     total_size = 0
 

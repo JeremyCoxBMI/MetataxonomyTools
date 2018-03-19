@@ -3,7 +3,8 @@ __author__ = 'COX1KB'
 
 import taxonomyLib as tl
 import sys
-
+import os
+import cPickle as pickle
 
 
 # takes accession numbers to length
@@ -37,13 +38,15 @@ if __name__ == "__main__":
 
     clades = []
 
+
+
     indexToLevels = [ -1 for x in range(len(tl.height.keys())+1)]
     indexToLevels[0] = "firstTaxon"
     for level in tl.height:
         indexToLevels[ tl.height[level] ] = level
 
     for key in range(1,9):
-	clades.append(indexToLevels[key])
+        clades.append(indexToLevels[key])
 
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tl.buildNodes()
@@ -53,23 +56,31 @@ if __name__ == "__main__":
     print >> sys.stderr, "20 Build list accession numbers"
     for f in files_list_file:
 
-        accessionNumbersToFind = {}
+        pickleName = f+".accession2taxa.pickle"
+        if os.path.exists(pickleName):
+            print >> sys.stderr, "30 Loading TAXA object from pickle"
+            taxa = pickle.load(open(pickleName, 'rb'))
+        else:
 
-        print >> sys.stderr, "\t\tFILE:\t"+f
+            accessionNumbersToFind = {}
 
-        for line in open(f.strip()):
-            spl = line.split()
-	    acc  = spl[0]
-	    l = int(spl[1])
-            acc = acc.split('.')[0]
-            accessionNumbersToFind[acc] = l
+            print >> sys.stderr, "\t\tFILE:\t"+f
 
+            for line in open(f.strip()):
+                spl = line.split()
+                acc = spl[0]
+                l = int(spl[1])
+                acc = acc.split('.')[0]
+                accessionNumbersToFind[acc] = l
 
-        print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
+            print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
 
-        print >> sys.stderr, "30 Find Taxa from Accession Number"
+            print >> sys.stderr, "30 Find Taxa from Accession Number"
 
-        taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
+            taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
+
+            pickle.dump(taxa, open(pickleName,"wb"))
+
 
         print >> sys.stderr, "TAXA found", str(len(taxa.keys()))
 
@@ -82,6 +93,7 @@ if __name__ == "__main__":
         header = "ACCESSION\t"+"\tfirstTaxon\t"+"\t".join(clades)+"\tSEQ_LENGTH\n"
         outF = open(f+".taxonomy.txt","w")
         outFerr = open(f+".taxonomy.txt.Accession.errors","w")
+        outF2 = open(f+".taxonomy_as_text.txt","w")
         outFerr.write(header)
         outF.write(header)
 
@@ -91,19 +103,25 @@ if __name__ == "__main__":
         for acc in taxa:
             (taxon, l) = taxa[acc]
             taxonomy = tl.buildTaxaLevelList3(int(taxon),nodes)
+            taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes)
             taxonomy.reverse()
+            #taxonomy_txt.reverse()
             taxonomy.append(l)
+            taxonomy_txt += "\t"+str(l)
             a = acc.split()[0]
             #taxonomy[1] = tl.getSpeciesID(int(taxon), nodes)
             #taxonomy[0] = taxonomy[0][0]
 
             outLine = a+"\t"+'\t'.join(map(str, taxonomy))+"\n"
+            outLine2 = a+"\t"+taxonomy_txt+"\n"
+
 
 
             if (taxonomy[1] == -1):
                 outFerr.write(outLine)
             else:
                 outF.write(outLine)
+                outF2.write(outLine2)
 
             if k % (100*1000) == 0:
                 print >> sys.stderr, "Processing "+str(k/(1000*1000.0))+" millionth Accession"

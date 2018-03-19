@@ -80,7 +80,6 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
         k = next
         z+=1
 
-
     return open+result
 
 height = dict()
@@ -461,6 +460,63 @@ def buildTaxaLevels( x , names, nodes, filter = None ):
 
 
     return open+result
+
+#TODO restore to previous version
+def buildTaxaLevels( x , names, nodes, filter = None ):
+    open = ""
+    result = ""
+    k = x
+    result += names[k]
+    (next, level) = nodes[k]
+    k = next
+    #EXAMPLE
+    #  (((((Gammaretrovirus)Orthoretrovirinae)Retroviridae)Retro-transcribing_viruses)Viruses,
+    z=0
+    while True:
+        (next, level) = nodes[k]
+        if filter == None or level in filter:
+            result = result + ("\t_%s_" % level) + names[k]
+
+        elif z >= MAX_ITERATIONS:
+            print >> sys.stderr,"taxonomyLib::buildTaxaLevels could not complete for taxon\t"+str(x)
+            break
+        if k in BREAK_IDS:
+            break
+        k = next
+        z+=1
+
+
+    return result
+
+def buildTaxaLevels2(x , names, nodes, filter = None ):
+    open = ""
+    result = ""
+    k = int(x)
+
+    if k in names:
+      result += names[k]+"\t"
+    else:
+      result += "unknown\t"
+
+    z=0
+    while True:
+	if k in nodes:
+	  (next, level) = nodes[k]
+	  if filter == None or level in filter:
+	      result = result + ("\t_%s_" % level) + names[k]
+
+	  elif z >= MAX_ITERATIONS:
+	      print >> sys.stderr,"taxonomyLib::buildTaxaLevels could not complete for taxon\t"+str(x)
+	      break
+	  if k in BREAK_IDS:
+	      break
+	  k = next
+	  z+=1
+	else:
+	  result+= str(k)+" has no parent node"
+	  break
+    return result
+
 
 height = dict()
 height["superkingdom"]=8
