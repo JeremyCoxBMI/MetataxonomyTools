@@ -112,7 +112,7 @@ if __name__ == "__main__":
             #taxonomy[0] = taxonomy[0][0]
 
             # outLine = a + "\t" + '\t'.join(map(str, taxonomy)) + "\n"
-            outLine2 = acc + "\t" + taxonomy_txt + "\t" + str(l) + "\n"  #taxonomy_txt starts with a tab
+            outLine2 = acc + "\t" (str(taxon))+ taxonomy_txt + "\t" + str(l) + "\n"  #taxonomy_txt starts with a tab
 
 
             # if (taxonomy[1] == -1):
