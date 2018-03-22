@@ -3,6 +3,7 @@ __author__ = 'COX1KB'
 
 import sys
 import taxonomyLib as tl
+import mytimer
 
 def makeTabs( k):
     result=""
@@ -78,6 +79,12 @@ cladeBaseCounts = [0 for x in range(len(clades_to_proces))]
 #cladeIndex = ["firstTAXON"]+[tl.LINNAEUS_TAXONOMY_REVERSE[x] for x in clades_to_proces]
 #cladeIndex.reverse()
 
+mt = mytimer.mytimer()
+mt.start()
+
+print >> sys.stderr, "OPENING FILE "+sys.argv[1]+ "\t"+(mt.elapsed()/1000)+" s"
+k=0
+period=100*1000
 for line in open(sys.argv[1]):
     splits = line.split('\t')
     if first:
@@ -113,12 +120,20 @@ for line in open(sys.argv[1]):
                     else:
                         curr_dict[v] = {}
                     curr_dict = curr_dict[v]
+    k+=1
+    if (k % period == 0):
+        a=k * 1.0 / period
+        print >> sys.stderr, "REACHED LINE {0:.2f} M\t".format(a),(mt.elapsed()/1000)+" s"
 
 
+k=0
 for key in taxonomyTree:
     output = str(key)
     recurseOutput(output, taxonomyTree[key],1)
-
+    k+=1
+    if (k % period == 0):
+        a=k * 1.0 / period
+        print >> sys.stderr, "REACHED LINE {0:.2f} M".format(a)
 
 for x in range(len(clades_to_proces)):
     clade = clades[ clades_to_proces[x] ]

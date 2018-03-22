@@ -41,3 +41,33 @@ class mytimer:
             return (now - self.Tstart) * 1000
         else:
             return str(self.Tstop - self.Tstart) * 1000
+
+    def elapsedAsTimeStamp(self):
+        if (self.Tstop == -1):
+            now = timeit.default_timer()
+            ns = (now - self.Tstart) * 1000 * 1000 * 1000
+        else:
+            ns =  (self.Tstop - self.Tstart) * 1000 * 1000 * 1000
+
+        result =""
+        #hours
+
+        temp = ns / (60L*60L*1000L*1000L*1000L)
+        result += "{0:.3f}:".format(temp)
+        #minutes
+        temp = ns / (60L * 1000L*1000L*1000L) % 60L
+        result += "{0:.2f}:".format(temp)
+
+        #seconds
+        temp = ns / (1000L*1000L*1000L) % 60L
+        result += "{0:.2f}:".format(temp)
+        #milliseconds
+        temp = ns / (1000L*1000L) % (1000L)
+        result += "{0:.3d}:".format(temp)
+        #microseconds
+        temp = ns / (1000L)% (1000L)
+        result += "{0:.3f}:".format(temp)
+        #nanoseconds
+        temp = ns % (1000L)
+        result += "{0:.3f}:".format(temp)
+
