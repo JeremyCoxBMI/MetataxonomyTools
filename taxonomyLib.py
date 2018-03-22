@@ -518,13 +518,15 @@ def buildTaxaLevels2(x, names, nodes, filter=LINNAEUS_TAXONOMY, xIsFirst=False):
 
 
     arr = ["" for x in filter]
+    #print "arr.length", arr.length
+
     z = 0
     while True:
         if k in nodes:
             (next, level) = nodes[k]
             if filter == None or level in filter:
                 idx = filter.index(level)
-                arr[ idx  ] = ("\t%d_%s_" % (k, level)) + names[k]
+                arr[ idx  ] = ("%d_%s_" % (k, level)) + names[k]
             elif z >= MAX_ITERATIONS:
                 print >> sys.stderr, "taxonomyLib::buildTaxaLevels could not complete for taxon\t" + str(x)
                 break

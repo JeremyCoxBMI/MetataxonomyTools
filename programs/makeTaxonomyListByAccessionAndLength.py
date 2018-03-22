@@ -98,7 +98,7 @@ if __name__ == "__main__":
             (taxon, l) = taxa[acc]
             taxon = int(taxon)
             taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes, tl.LINNAEUS_TAXONOMY_REVERSE)
-            outLine2 = acc + "\t" + (str(taxon))+ "\t" + taxonomy_txt + "\t" + str(l) + "\n"
+            outLine2 = acc + "\t" + str(taxon)+ "\t" + taxonomy_txt + "\t" + str(l) + "\n"
 
             outF2.write(outLine2)
 
