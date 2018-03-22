@@ -2,6 +2,7 @@
 __author__ = 'COX1KB'
 
 import sys
+import taxonomyLib as tl
 
 def makeTabs( k):
     result=""
@@ -36,7 +37,7 @@ def recurseOutput( aString, atree, numTabs):
                 for k in range(len(splits)):
                     if len(splits[k]) > 0:
                         cladeBaseCounts[k] += l3ngth
-                
+
             else:
                 string1 = makeTabs(numTabs)+str(name)+"\t"+str(l3ngth)
             print string1
@@ -62,6 +63,7 @@ clades_to_proces.reverse()
 
 cladeBaseCounts = [0 for x in range(len(clades_to_proces)+4)]
 
+cladeIndex = [tl.LINNAEUS_TAXONOMY[x] for x in clades_to_proces]
 
 for line in open(sys.argv[1]):
     splits = line.split('\t')
@@ -97,8 +99,8 @@ for line in open(sys.argv[1]):
 for key in taxonomyTree:
     output = str(key)
     recurseOutput(output, taxonomyTree[key],1)
-    
-    
+
+
 for x in range(len(clades_to_proces)):
     clade = clades[ clades_to_proces[x] ]
     print >> sys.stderr, "Clade by longest only\t"+clade+"\ttotal length\t"+str(cladeBaseCounts[x])# -*- coding: utf-8 -*-
@@ -135,11 +137,12 @@ def recurseOutput( aString, atree, numTabs):
             if first:
                 first=False
                 string1 = aString+'\t'+str(name)+"\t"+str(l3ngth)
-                splits = string1.splts("\t")
-                for k in range(len(splits)):
-                    if len(splits[k]) > 0:
+                splits = string1.split("\t")
+
+                for k in range(len(cladeBaseCounts)):
+                    if len(splits[k+1]) > 0:
                         cladeBaseCounts[k] += l3ngth
-                
+
             else:
                 string1 = makeTabs(numTabs)+str(name)+"\t"+str(l3ngth)
             print string1
@@ -200,8 +203,8 @@ for line in open(sys.argv[1]):
 for key in taxonomyTree:
     output = str(key)
     recurseOutput(output, taxonomyTree[key],1)
-    
-    
-for x in len(range(clades_to_proces)):
+
+
+for x in range(len(clades_to_proces)):
     clade = clades[ clades_to_proces[x] ]
     print >> sys.stderr, "Clade by longest only\t"+clade+"\ttotal length\t"+str(cladeBaseCounts[x])
