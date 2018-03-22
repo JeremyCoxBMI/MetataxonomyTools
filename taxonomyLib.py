@@ -509,6 +509,8 @@ def buildTaxaLevels(x, names, nodes, filter=None):
 #returns a tab in front
 #TODO can set if puts (x) first; remove the \t first
 def buildTaxaLevels2(x, names, nodes, filter=LINNAEUS_TAXONOMY, xIsFirst=False):
+#LINNAEUS_TAXONOMY_REVERSE = ["species","genus", "family", "order", "class","phylum","kingdom","superkingdom"]
+
     open = ""
     result = ""
     #resultInt = []

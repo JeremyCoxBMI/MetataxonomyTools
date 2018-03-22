@@ -104,4 +104,4 @@ for key in taxonomyTree:
 
 for x in range(len(clades_to_proces)):
     clade = clades[ clades_to_proces[x] ]
-    print >> sys.stderr, "Clade by longest only\t"+clade+"\ttotal length\t"+str(cladeBaseCounts[x])# -*- coding: utf-8 -*-
+    print >> sys.stderr, "Clade by longest only\t"+clade+"\ttotal length\t"+str(cladeBaseCounts[x])
