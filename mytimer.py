@@ -63,7 +63,7 @@ class mytimer:
         result += "{0:.2f}:".format(temp)
         #milliseconds
         temp = ns / (1000L*1000L) % (1000L)
-        result += "{0:.3d}:".format(temp)
+        result += "{0:.3f}:".format(temp)
         #microseconds
         temp = ns / (1000L)% (1000L)
         result += "{0:.3f}:".format(temp)
@@ -71,3 +71,4 @@ class mytimer:
         temp = ns % (1000L)
         result += "{0:.3f}:".format(temp)
 
+        return result
