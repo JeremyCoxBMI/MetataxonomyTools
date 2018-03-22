@@ -22,6 +22,9 @@ def recurseOutput( aString, atree, numTabs):
             recurseOutput(string1, atree[key],numTabs+1)
 
     elif isinstance(atree, list):
+
+        #process counting
+
         #species level, next level is firstTaxon level
         #sort from greatest to least for output
         atree.sort()
@@ -31,13 +34,13 @@ def recurseOutput( aString, atree, numTabs):
         for value in atree:
             (l3ngth, name) = value
             if first:
+                #count largest count only  (largest to smallest, first is biggest)
                 first=False
                 string1 = aString+'\t'+str(name)+"\t"+str(l3ngth)
                 splits = string1.split("\t")
-                for k in range(len(splits)):
+                for k in range(len(clades_to_proces)):
                     if len(splits[k]) > 0:
                         cladeBaseCounts[k] += l3ngth
-
             else:
                 string1 = makeTabs(numTabs)+str(name)+"\t"+str(l3ngth)
             print string1
@@ -54,14 +57,23 @@ def initializeDoubleDict(aList):
 
 
 
+#####
+# DESIGN
+# taxonomyTree is a multi-level tree, where leaves are lists of firstTaxon's and their genome lengths
+#####
 taxonomyTree = {}
 
 
 first=True
-clades_to_proces = range(0,6)
+
+#allows user to choose clades investigated
+# start at 0 (FirstTaxon) thru Phylum (Kingdom and Superkingdom unreliable)
+clades_to_proces = range(0,7)
+
+#Want general to specific
 clades_to_proces.reverse()
 
-cladeBaseCounts = [0 for x in range(len(clades_to_proces)+4)]
+cladeBaseCounts = [0 for x in range(len(clades_to_proces))]
 
 #cladeIndex = ["firstTAXON"]+[tl.LINNAEUS_TAXONOMY_REVERSE[x] for x in clades_to_proces]
 #cladeIndex.reverse()
@@ -78,6 +90,12 @@ for line in open(sys.argv[1]):
         if len(splits) >= 9:
             for x in clades_to_proces:
                 v=splits[x]
+
+                # what if clade is empty -->  abort?  this writes no additional data down the tree
+                # counts are handled by complete taxonomies
+                if v == "":
+                    break
+
                 if x == clades_to_proces[-1]: #firstTaxon level; is a list
                     found=False
                     for entry in curr_dict:
