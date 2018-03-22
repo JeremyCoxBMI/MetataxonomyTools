@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
-        header = "ACCESSION\t" + "firstTaxon\t" + "\t".join(clades) + "\tSEQ_LENGTH\n"
+        header = "ACCESSION\t" + "\t".join(clades) + "\tSEQ_LENGTH\n"
         #outF = open(f + ".taxonomy.txt", "w")
         outFerr = open(f + ".taxonomy.txt.Accession.errors", "w")
         outF2 = open(f + ".taxonomy_as_text.txt", "w")
@@ -102,7 +102,7 @@ if __name__ == "__main__":
             (taxon, l) = taxa[acc]
             taxon = int(taxon)
             #taxonomy = tl.buildTaxaLevelList3(int(taxon), nodes)
-            taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes, tl.height.keys())
+            taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes, clades)
             #taxonomy.reverse()
             # taxonomy_txt.reverse()
             #taxonomy.append(l)
