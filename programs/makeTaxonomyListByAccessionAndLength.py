@@ -88,11 +88,7 @@ if __name__ == "__main__":
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
 
         header = "ACCESSION\t" + "\t".join(clades) + "\tSEQ_LENGTH\n"
-        #outF = open(f + ".taxonomy.txt", "w")
-        outFerr = open(f + ".taxonomy.txt.Accession.errors", "w")
         outF2 = open(f + ".taxonomy_as_text.txt", "w")
-        outFerr.write(header)
-        #outF.write(header)
         outF2.write(header)
 
         k = 0
@@ -101,27 +97,12 @@ if __name__ == "__main__":
         for acc in taxa:
             (taxon, l) = taxa[acc]
             taxon = int(taxon)
-            #taxonomy = tl.buildTaxaLevelList3(int(taxon), nodes)
             taxonomy_txt = tl.buildTaxaLevels2(int(taxon), names, nodes, tl.LINNAEUS_TAXONOMY_REVERSE)
-            #taxonomy.reverse()
-            # taxonomy_txt.reverse()
-            #taxonomy.append(l)
-            #taxonomy_txt += "\t" + str(l)
-            #a = acc.split()[0]
-            #taxonomy[1] = tl.getSpeciesID(int(taxon), nodes)
-            #taxonomy[0] = taxonomy[0][0]
+            outLine2 = acc + "\t" + (str(taxon))+ "\t" + taxonomy_txt + "\t" + str(l) + "\n"
 
-            # outLine = a + "\t" + '\t'.join(map(str, taxonomy)) + "\n"
-            outLine2 = acc + "\t" + (str(taxon))+ taxonomy_txt + "\t" + str(l) + "\n"
-
-
-            # if (taxonomy[1] == -1):
-            #     outFerr.write(outLine)
-            # else:
-            #     outF.write(outLine)
             outF2.write(outLine2)
 
             if k % (100 * 1000) == 0:
                 print >> sys.stderr, "Processing " + str(k / (1000 * 1000.0)) + " millionth Accession"
             k += 1
-            #end for l in file_list
+    #end for l in file_list
