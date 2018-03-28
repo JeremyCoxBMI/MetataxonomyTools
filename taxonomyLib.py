@@ -2,6 +2,8 @@
 from config import *
 import sys
 import copy
+import os
+import cPickle as pickle
 
 # Thanks to NCBI, the structure of the taxonomy table is constantly changing
 # 1 is no longer the root node
