@@ -847,3 +847,51 @@ def findKingdom(speciesID, names, nodes):
             print >> sys.stderr, "taxonomyLib::findKingdom could not find speciesID\t" + str(speciesID)
             break
     return result
+
+
+def accessionToTaxaLevelsPickleOption(fastAfile, pickleName):
+
+        if os.path.exists(pickleName):
+            print >> sys.stderr, "30 Loading TAXA object from pickle"
+            taxa = pickle.load(open(pickleName, 'rb'))
+        else:
+
+            accessionNumbersToFind = {}
+
+            print >> sys.stderr, "\t\tFILE:\t" + fastAfile
+
+            for line in open(fastAfile.strip()):
+                spl = line.split()
+                acc = spl[0]
+                l = int(spl[1])
+                acc = acc.split('.')[0]
+                accessionNumbersToFind[acc] = l
+
+            print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
+
+            print >> sys.stderr, "30 Find Taxa from Accession Number"
+
+            taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
+
+            pickle.dump(taxa, open(pickleName, "wb"))
+
+        return taxa
+
+
+def findAccessionNumbers2TaxaLength(adict):
+    result = {}
+    # iterate over file
+    for line in open(tL.AccessionDBpath + "master.accession2taxid"):
+        splits = line.split()
+        acc = splits[0].split('.')[0]
+        if acc == "NZ_GG666849":
+            DEBUG = "LINE"
+
+        # if len(acc) > 0 and acc[0] == 'N':
+        #     cheese = acc in adict
+        #     DEBUG = "LINE"
+
+        if acc in adict:
+            #print splits[0], " found ", splits[2]
+            result[acc] = (splits[2], adict[acc])  #accession to (taxon, length)
+    return result
