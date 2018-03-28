@@ -45,8 +45,9 @@ if __name__ == "__main__":
     # print files
 
     clades = ["firstTaxon"]+tL.LINNAEUS_TAXONOMY_REVERSE
+    taxaList ={}
     for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
-        taxaList = {}
+        taxaList[clade] = {}
 
 
     # indexToLevels = [-1 for x in range(len(tL.height.keys()) + 1)]
@@ -103,8 +104,6 @@ if __name__ == "__main__":
         k = 0
         kingdom = "Bacteria"
 
-        taxaList = {}
-
         for acc in taxa:
             (taxon, L) = taxa[acc]
             taxon = int(taxon)
@@ -112,10 +111,11 @@ if __name__ == "__main__":
             taxa = taxonomy_txt.split()
             for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
                 k=tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
-                if taxa[k] in taxaList[k]:
-                    taxaList[k][taxa[k]][ taxa[acc] ] += int(L)
+                if taxa[k] in taxaList[clade]:
+                    taxaList[clade][taxa[k]][ taxon ] += int(L)
                 else:
-                    taxaList[k][taxa[k]][ taxa[acc] ] = int(L)
+                    taxaList[clade][taxa[k]] = {}
+                    taxaList[clade][taxa[k]][ taxon ] = int(L)
                 
             
             outLine2 = acc + "\t" + str(taxon)+ "\t" + taxonomy_txt + "\t" + str(L) + "\n"
@@ -128,21 +128,21 @@ if __name__ == "__main__":
     #end for l in file_list
         outF2.close()
 
-        print >> sys.stderr, "Outputting one taxon per clade files"
-        
-        for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
+    print >> sys.stderr, "Outputting one taxon per clade files"
 
-            filename=f + "."+str(clade)+'.longest.only.txt'
-            outF = open(filename, "w")
-            total=0
-            k=tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
+    for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
 
-            print >> sys.stderr, "\tOutputting one taxon per clade files"
-            print >> sys.stderr, "\t\t",str(clade),"\t"+filename
+        filename=f + "."+str(clade)+'.longest.only.txt'
+        outF = open(filename, "w")
+        total=0
+        k=tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
 
-            for taxon in taxaList[k]:
-                (L, taxon) = findLargestKey(taxaList[taxon])
-                outF.write(str(taxon)+"\t"+str(L)+"\n")
+        print >> sys.stderr, "\tOutputting one taxon per clade files"
+        print >> sys.stderr, "\t\t",str(clade),"\t"+filename
 
-            outF.close()
-            print >> sys.stderr, "\t\t",str(clade),"\tcount\t"+str(total)
+        for taxon in taxaList[clade]:
+            (L, taxon) = findLargestKey(taxaList[clade][taxon])
+            outF.write(str(taxon)+"\t"+str(L)+"\n")
+
+        outF.close()
+        print >> sys.stderr, "\t\t",str(clade),"\tcount\t"+str(total)
