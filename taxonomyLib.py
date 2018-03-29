@@ -851,11 +851,13 @@ def findKingdom(speciesID, names, nodes):
     return result
 
 
-def accessionToTaxaLevelsPickleOption(fastAfile, pickleName):
+def accessionToTaxaLevelsPickleOption(fastAfile, taxa=None):
 
+        pickleName = fastAfile+".accession2length.pickle";
         if os.path.exists(pickleName):
             print >> sys.stderr, "30 Loading TAXA object from pickle"
             taxa = pickle.load(open(pickleName, 'rb'))
+            print >> sys.stderr, "Number of Accession loaded", str(len(taxa))
         else:
 
             accessionNumbersToFind = {}
@@ -873,17 +875,22 @@ def accessionToTaxaLevelsPickleOption(fastAfile, pickleName):
 
             print >> sys.stderr, "30 Find Taxa from Accession Number"
 
-            taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
+            taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind, taxa)
 
+            print >> sys.stderr, "35 Dumping TAXA object to pickle"
             pickle.dump(taxa, open(pickleName, "wb"))
 
         return taxa
 
 
-def findAccessionNumbers2TaxaLength(adict):
-    result = {}
+## may accept an existing dictionary of taxa and expound upon it
+def findAccessionNumbers2TaxaLength(adict, taxa=None):
+    if taxa != None:
+        result=taxa
+    else:
+        result = {}
     # iterate over file
-    for line in open(tL.AccessionDBpath + "master.accession2taxid"):
+    for line in open(AccessionDBpath + "master.accession2taxid"):
         splits = line.split()
         acc = splits[0].split('.')[0]
         if acc == "NZ_GG666849":
