@@ -7,16 +7,19 @@ import os
 import cPickle as pickle
 
 
-# takes accession numbers to length
-# maps accession to length,
+# takes a list of (integer, text) and returns pair wwith largest integer
 
 def findLargestKey(adict):
     temp = []
     for key in adict:
-        temp.append(  ( adict[key], key )   )
+        temp.append(( adict[key], key ))
     temp.sort()
-    
-    return temp[-1]     # (length, taxon)
+
+    return temp[-1]  # (length, taxon)
+
+
+# takes accession numbers to length
+# maps accession to length,
 
 def findAccessionNumbers2TaxaLength(adict):
     result = {}
@@ -40,109 +43,104 @@ def findAccessionNumbers2TaxaLength(adict):
 if __name__ == "__main__":
 
     print >> sys.stderr, "01 Monitoring Start Up"
-    files_list_file = sys.argv[1:]
-    # print str(len(files))
-    # print files
-
-    clades = ["firstTaxon"]+tL.LINNAEUS_TAXONOMY_REVERSE
-    taxaList ={}
+    clades = ["firstTaxon"] + tL.LINNAEUS_TAXONOMY_REVERSE
+    taxaList = {}
     for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
         taxaList[clade] = {}
 
 
-    # indexToLevels = [-1 for x in range(len(tL.height.keys()) + 1)]
-    # indexToLevels[0] = "firstTaxon"
-    # for level in tL.height:
-    #     indexToLevels[tL.height[level]] = level
-    #
-    # for key in range(1, 9):
-    #     clades.append(indexToLevels[key])
+    files_list_file = sys.argv[1:]
+    # print str(len(files))
+    # print files
+
+
+
 
     print >> sys.stderr, "10 Building databases"
     (nodes, levels) = tL.buildNodes()
     names = tL.buildNames()
 
+
+
     print >> sys.stderr, "BEGIN LOOP"
     print >> sys.stderr, "20 Build list accession numbers"
     for f in files_list_file:
 
-        pickleName = f + ".accession2taxa.pickle"
-        if os.path.exists(pickleName):
-            print >> sys.stderr, "30 Loading TAXA object from pickle"
-            taxa = pickle.load(open(pickleName, 'rb'))
-        else:
+        accessionNumbersToFind = {}
 
-            accessionNumbersToFind = {}
+        print >> sys.stderr, "\t\tFILE:\t" + f
 
-            print >> sys.stderr, "\t\tFILE:\t" + f
+        for line in open(f.strip()):
+            (acc, l) = line.split()
+            acc = acc.split('.')[0]
+            accessionNumbersToFind[acc] = l
 
-            for line in open(f.strip()):
-                spl = line.split()
-                acc = spl[0]
-                l = int(spl[1])
-                acc = acc.split('.')[0]
-                accessionNumbersToFind[acc] = l
+        print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
 
-            print >> sys.stderr, "Number of Accession to Find", str(len(accessionNumbersToFind))
+        print >> sys.stderr, "30 Find Taxa from Accession Number"
 
-            print >> sys.stderr, "30 Find Taxa from Accession Number"
-
-            taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
-
-            pickle.dump(taxa, open(pickleName, "wb"))
+        taxa = findAccessionNumbers2TaxaLength(accessionNumbersToFind)
 
         print >> sys.stderr, "TAXA found", str(len(taxa.keys()))
 
-        accessionToTaxonomy = {}
+        species = {}
 
         print >> sys.stderr, "40 Find species and Kingdom, write file real time"
+
+        # outF = open(f + ".species.db.list.txt", "w")
+        # outFerr = open(f + ".species.db.list.txt.Accession.errors", "w")
+        # outF.write("ACCESSION\t|\tFIRST_TAXON\t|\tSPECIES_ID\t|\tKINGDOM\t|\tLENGTH\n")
+        # outFerr.write("ACCESSION\t|\tFIRST_TAXON\t|\tSPECIES_ID\t|\tKINGDOM\t|\tLENGTH\n")
+
+        k = 0
+        kingdom = "Bacteria"
+
 
         header = "ACCESSION\t" + "\t".join(clades) + "\tSEQ_LENGTH\n"
         outF2 = open(f + ".taxonomy_as_text.txt", "w")
         outF2.write(header)
 
-        k = 0
-        kingdom = "Bacteria"
 
+        # print taxa
         for acc in taxa:
-            (taxon, L) = taxa[acc]
+            temp = taxa[acc]
+            (taxon, L) = temp
             taxon = int(taxon)
             taxonomy_txt = tL.buildTaxaLevels2(int(taxon), names, nodes, tL.LINNAEUS_TAXONOMY_REVERSE)
             taxa = taxonomy_txt.split()
             for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
-                k=tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
+                k = tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
                 if taxa[k] in taxaList[clade]:
-                    taxaList[clade][taxa[k]][ taxon ] += int(L)
+                    taxaList[clade][taxa[k]][taxon] += int(L)
                 else:
                     taxaList[clade][taxa[k]] = {}
-                    taxaList[clade][taxa[k]][ taxon ] = int(L)
-                
-            
-            outLine2 = acc + "\t" + str(taxon)+ "\t" + taxonomy_txt + "\t" + str(L) + "\n"
+                    taxaList[clade][taxa[k]][taxon] = int(L)
+
+            outLine2 = acc + "\t" + str(taxon) + "\t" + taxonomy_txt + "\t" + str(L) + "\n"
 
             outF2.write(outLine2)
 
             if k % (100 * 1000) == 0:
                 print >> sys.stderr, "Processing " + str(k / (1000 * 1000.0)) + " millionth Accession"
             k += 1
-    #end for l in file_list
+            #end for l in file_list
         outF2.close()
 
-    print >> sys.stderr, "Outputting one taxon per clade files"
+        print >> sys.stderr, "Outputting one taxon per clade files"
 
-    for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
+        for clade in tL.LINNAEUS_TAXONOMY_REVERSE:
 
-        filename=f + "."+str(clade)+'.longest.only.txt'
-        outF = open(filename, "w")
-        total=0
-        k=tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
+            filename = f + "." + str(clade) + '.longest.only.txt'
+            outF = open(filename, "w")
+            total = 0
+            k = tL.LINNAEUS_TAXONOMY_REVERSE.index(clade)
 
-        print >> sys.stderr, "\tOutputting one taxon per clade files"
-        print >> sys.stderr, "\t\t",str(clade),"\t"+filename
+            print >> sys.stderr, "\tOutputting one taxon per clade files"
+            print >> sys.stderr, "\t\t", str(clade), "\t" + filename
 
-        for taxon in taxaList[clade]:
-            (L, taxon) = findLargestKey(taxaList[clade][taxon])
-            outF.write(str(taxon)+"\t"+str(L)+"\n")
+            for taxon in taxaList[clade]:
+                (L, taxon) = findLargestKey(taxaList[clade][taxon])
+                outF.write(str(taxon) + "\t" + str(L) + "\n")
 
-        outF.close()
-        print >> sys.stderr, "\t\t",str(clade),"\tcount\t"+str(total)
+            outF.close()
+            print >> sys.stderr, "\t\t", str(clade), "\tcount\t" + str(total)
